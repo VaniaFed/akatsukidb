@@ -1,7 +1,11 @@
 class DataBase {
     query(queryString) {
-        const actionType = this._determineAction(queryString);
-        console.log(actionType);
+        const action = this._determineAction(queryString);
+        this._perform(action, queryString);
+    }
+
+    _perform(actionType, queryString) {
+        console.log(actionType, queryString)
     }
 
     _determineAction(queryString) {
