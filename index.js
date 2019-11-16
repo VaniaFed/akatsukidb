@@ -5,24 +5,52 @@ class DataBase {
     }
 
     _determineAction(queryString) {
-        const selectRegx = /select/i;
-        const insertRegx = /insert/i;
-        const createDatabaseRegx = /create database/i;
-        const createTableRegx = /create table/i;
-        const useDatabaseRegx = /use/i;
-        if (selectRegx.test(queryString)) {
+        if (this._isActionSelect(queryString)) {
             return 'select';
-        } else if(insertRegx.test(queryString)) {
+        } else if(this._isActionInsert((queryString))) {
             return 'insert';
-        } else if (createDatabaseRegx) {
+        } else if (this._isActionCreateDatabase(queryString)) {
             return 'create database';
-        } else if (createTableRegx) {
+        } else if (this._isActionCreateTable(queryString)) {
             return 'create table';
-        } else if (useDatabaseRegx) {
+        } else if (this._isActionUseDatabase(queryString)) {
             return 'use database';
         }
         throw new Error('This action does\'nt exist');
     }
+
+    _isActionSelect(queryString) {
+        const test = /select/i;
+        if (test.test(queryString)) {
+            return true;
+        }
+    }
+
+    _isActionInsert(queryString) {
+        const test = /insert/i;
+        if (test.test(queryString)) {
+            return true;
+        }
+    }
+    _isActionCreateDatabase(queryString) {
+        const test = /create database/i;
+        if (test.test(queryString)) {
+            return true;
+        }
+    }
+    _isActionCreateTable(queryString) {
+        const test = /create table/i;
+        if (test.test(queryString)) {
+            return true;
+        }
+    }
+    _isActionUseDatabase(queryString) {
+        const test = /use/i;
+        if (test.test(queryString)) {
+            return true;
+        }
+    }
+
     createDatabase(databaseName) {}
     createTable(tableName) {}
     use(databaseName) {}
@@ -32,4 +60,4 @@ class DataBase {
 }
 
 const db = new DataBase();
-db.query('CREATE DATABASE student');
+db.query('SELECT * FROM student');
