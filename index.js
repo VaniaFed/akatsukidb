@@ -4,10 +4,6 @@ class DataBase {
         this._perform(action, queryString);
     }
 
-    _perform(actionType, queryString) {
-        console.log(actionType, queryString)
-    }
-
     _determineAction(queryString) {
         if (this._isActionSelect(queryString)) {
             return 'select';
@@ -57,7 +53,6 @@ class DataBase {
             return true;
         }
     }
-
     _isActionInsert(queryString) {
         const test = /insert/i;
         if (test.test(queryString)) {
@@ -83,13 +78,16 @@ class DataBase {
         }
     }
 
-    createDatabase(databaseName) {}
-    createTable(tableName) {}
-    use(databaseName) {}
-
-    select() {}
-    insert() {}
+    _createDatabase(queryString) {
+        const regx = /create database (\b\w+\b)/i;
+        const databaseName = queryString.match(regx)[1];
+        console.log(databaseName);
+    }
+    _createTable(tableName) {}
+    _useDatabase(databaseName) {}
+    _select() {}
+    _insert() {}
 }
 
 const db = new DataBase();
-db.query('SELECT * FROM student');
+db.query('CREATE DATABASE student');
