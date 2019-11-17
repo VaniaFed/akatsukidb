@@ -23,6 +23,34 @@ class DataBase {
         throw new Error('This action does\'nt exist');
     }
 
+    _perform(action, queryString) {
+        switch (action) {
+            case 'select': {
+                this._select(queryString);
+                break;
+            }
+            case 'insert': {
+                this._insert(queryString);
+                break;
+            }
+            case 'create database': {
+                this._createDatabase(queryString);
+                break;
+            }
+            case 'create table': {
+                this._createTable(queryString);
+                break;
+            }
+            case 'use database': {
+                this._useDatabase(queryString);
+                break;
+            }
+            default: {
+                break;
+            }
+        }
+    }
+
     _isActionSelect(queryString) {
         const test = /select/i;
         if (test.test(queryString)) {
