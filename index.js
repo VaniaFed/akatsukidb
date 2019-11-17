@@ -88,11 +88,16 @@ class DataBase {
         const tableName = queryString.match(regx)[1];
         console.log(tableName);
     }
-    _useDatabase(databaseName) {}
+    _useDatabase(queryString) {
+        const regx = /use (\b\w+\b)/i;
+        const databaseName = queryString.match(regx)[1];
+        console.log(databaseName);
+    }
     _select() {}
     _insert() {}
 }
 
 const db = new DataBase();
 db.query('CREATE DATABASE school');
+db.query('USE school');
 db.query('CREATE TABLE student');
