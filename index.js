@@ -93,11 +93,29 @@ class DataBase {
         const databaseName = queryString.match(regx)[1];
         console.log(databaseName);
     }
+    _insert(queryString) {
+        const regx = /insert\sinto\s(\w+)\s\(([\w,\s\d]+)\)\svalues\s\(([\d\w\s",]+)\)/i;
+
+        const tableName = queryString.match(regx)[1];
+        console.log(tableName);
+
+        const fieldsString = queryString.match(regx)[2];
+        const fields = fieldsString.split(/,\s*/i);
+        console.log(fields);
+
+        const valuesString = queryString.match(regx)[3];
+        const values = valuesString.split(/,\s*/i);
+        console.log(values);
+    }
     _select() {}
-    _insert() {}
 }
 
 const db = new DataBase();
 db.query('CREATE DATABASE school');
 db.query('USE school');
 db.query('CREATE TABLE student');
+db.query('INSERT INTO student (id, fullName,age) VALUES (1,"Ivan Ferraro", 19)');
+
+// db.query('SELECT * FROM student');
+// db.query('SELECT fullName, age FROM student');
+// db.query('SELECT * FROM student WHERE age > 18');
