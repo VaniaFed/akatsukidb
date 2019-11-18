@@ -1,4 +1,14 @@
+import { v4 } from 'uuid';
+
 class DataBase {
+    constructor () {
+        this.databases = {
+            current: null,
+            list: []
+        };
+        this.tables = [];
+    }
+
     query(queryString) {
         const action = this._determineAction(queryString);
         this._perform(action, queryString);
@@ -81,17 +91,19 @@ class DataBase {
     _createDatabase(queryString) {
         const regx = /create database (\b\w+\b)/i;
         const databaseName = queryString.match(regx)[1];
-        console.log(databaseName);
+        this._setDatabase(databaseName);
     }
     _createTable(queryString) {
         const regx = /create table (\b\w+\b)/i;
         const tableName = queryString.match(regx)[1];
-        console.log(tableName);
+        this._setTable(tableName);
     }
     _useDatabase(queryString) {
         const regx = /use (\b\w+\b)/i;
         const databaseName = queryString.match(regx)[1];
-        console.log(databaseName);
+        this.databases.current = this.databases.list.find(database =>
+            database.name === databaseName
+        ).id;
     }
     _insert(queryString) {
         const regx = /insert\sinto\s(\w+)\s\(([\w,\s\d]+)\)\svalues\s\(([\d\w\s",]+)\)/i;
@@ -108,14 +120,29 @@ class DataBase {
         console.log(values);
     }
     _select() {}
+
+    _setDatabase(databaseName) {
+        const newDatabase = {
+            id: v4(),
+            name: databaseName
+        };
+        this.databases.list = [...this.databases.list, newDatabase];
+    }
+    _setTable(tableName) {
+        const newTable = {
+            id: v4(),
+            name: tableName
+        };
+        this.tables = [...this.tables, newTable];
+    }
 }
 
 const db = new DataBase();
 db.query('CREATE DATABASE school');
 db.query('USE school');
-db.query('CREATE TABLE student (id int, full_name varchar(255), age int)');
-db.query('INSERT INTO student (id, fullName,age) VALUES (1,"Ivan Ferraro", 19)');
 
+// db.query('CREATE TABLE student (id int, full_name varchar(255), age int)');
+// db.query('INSERT INTO student (id, fullName,age) VALUES (1,"Ivan Ferraro", 19)');
 // db.query('SELECT * FROM student');
 // db.query('SELECT fullName, age FROM student');
 // db.query('SELECT * FROM student WHERE age > 18');
