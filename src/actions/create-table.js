@@ -1,10 +1,11 @@
-import {v4} from "uuid";
+import { v4 } from "uuid";
 
-export const createTable = queryString => {
+export const createTable = (queryString, databaseId) => {
     const tableName = getTableName(queryString);
     return {
         id: v4(),
-        name: tableName
+        name: tableName,
+        databaseId
     };
 };
 

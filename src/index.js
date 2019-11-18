@@ -21,9 +21,7 @@ class DataBase {
                 break;
             }
             case 'insert': {
-                const {tableName, fields, values } = insert(queryString);
-                this._addTable(tableName);
-                console.log(this.tables, fields, values);
+                const { tableName, fields, values } = insert(queryString);
                 break;
             }
             case 'create database': {
@@ -32,8 +30,10 @@ class DataBase {
                 break;
             }
             case 'create table': {
-                const newTable = createTable(queryString);
+                const databaseId = this.database.current;
+                const newTable = createTable(queryString, databaseId);
                 this._addTable(newTable);
+                console.log(this.tables);
                 break;
             }
             case 'use database': {
@@ -67,13 +67,13 @@ class DataBase {
 }
 
 const db = new DataBase();
-// db.query('CREATE DATABASE school');
-// db.query('USE school');
+db.query('CREATE DATABASE school');
+db.query('USE school');
 //
-// db.query('CREATE TABLE student (id int, full_name varchar(255), age int)');
-// db.query('CREATE TABLE teacher (id int, full_name varchar(255), age int)');
-// db.query('CREATE TABLE employee (id int, full_name varchar(255), age int)');
-// db.query('CREATE TABLE god (id int, full_name varchar(255), age int)');
+db.query('CREATE TABLE student (id int, full_name varchar(255), age int)');
+db.query('CREATE TABLE teacher (id int, full_name varchar(255), age int)');
+db.query('CREATE TABLE employee (id int, full_name varchar(255), age int)');
+db.query('CREATE TABLE god (id int, full_name varchar(255), age int)');
 db.query('INSERT INTO student (id, fullName,age) VALUES (1,"Ivan Ferraro", 19)');
 // db.query('SELECT * FROM student');
 // db.query('SELECT fullName, age FROM student');

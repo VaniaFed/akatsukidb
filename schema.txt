@@ -32,8 +32,4 @@ const sampleData = {
 db.query('CREATE TABLE student (id int, full_name varchar(255), age int)');
 
  TODO:
-     1. add method _setCurrentDatabase.
-     2. extract the following methods into another modules:
-        a. setDatabase, setTable
-        b. isAction...
-        c. create...
+
