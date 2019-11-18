@@ -113,7 +113,7 @@ class DataBase {
 const db = new DataBase();
 db.query('CREATE DATABASE school');
 db.query('USE school');
-db.query('CREATE TABLE student');
+db.query('CREATE TABLE student (id int, full_name varchar(255), age int)');
 db.query('INSERT INTO student (id, fullName,age) VALUES (1,"Ivan Ferraro", 19)');
 
 // db.query('SELECT * FROM student');

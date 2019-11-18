@@ -1,0 +1,32 @@
+const sampleData = {
+    databases: [
+        {
+            id: 1,
+            name: 'school'
+        }
+    ],
+    tables: [
+        {
+            id: 1,
+            name: 'student',
+            databaseId: 1,
+            structure: {
+                columns: [
+                    {
+                        name: 'full_name',
+                        type: 'string'
+                    }
+                ],
+            }
+        }
+    ],
+    entries: [
+        {
+            tableId: 1,
+            column: 'full_name',
+            value: 'Ivan Fedyakov'
+        }
+    ]
+};
+
+db.query('CREATE TABLE student (id int, full_name varchar(255), age int)');
