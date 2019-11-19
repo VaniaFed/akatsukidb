@@ -23,19 +23,9 @@ class DataBase {
             }
             case 'insert': {
                 const { tableName, fields, values } = insert(queryString);
-                const tableId = this.tables.find(table => table.name === tableName).id;
-                // updateTable() {}
-                fields.forEach((field, i) => {
-                    this.entries.push({
-                        tableId,
-                        field,
-                        value: values[i]
-                    });
-                });
-                console.log(this.entries);
+                this._updateTable(tableName, fields, values);
                 break;
             }
-            // updateTable() {}
             case 'create database': {
                 const newDatabase = createDatabase(queryString);
                 this._addDatabase(newDatabase);
@@ -62,6 +52,17 @@ class DataBase {
     }
     _addTable(table) {
         this.tables = [...this.tables, table];
+    }
+    _updateTable(tableName, fields, values) {
+        const tableId = this.tables.find(table => table.name === tableName).id;
+        fields.forEach((field, i) => {
+            this.entries.push({
+                tableId,
+                field,
+                value: values[i]
+            });
+        });
+        console.log(this.entries);
     }
     _setCurrentDatabase(queryString) {
         const databaseName = this._getUseDatabaseName(queryString);
