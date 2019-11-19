@@ -7,6 +7,7 @@ class DataBase {
             list: []
         };
         this.tables = [];
+        this.entries = [];
     }
 
     query(queryString) {
@@ -22,8 +23,19 @@ class DataBase {
             }
             case 'insert': {
                 const { tableName, fields, values } = insert(queryString);
+                const tableId = this.tables.find(table => table.name === tableName).id;
+                // updateTable() {}
+                fields.forEach((field, i) => {
+                    this.entries.push({
+                        tableId,
+                        field,
+                        value: values[i]
+                    });
+                });
+                console.log(this.entries);
                 break;
             }
+            // updateTable() {}
             case 'create database': {
                 const newDatabase = createDatabase(queryString);
                 this._addDatabase(newDatabase);
@@ -32,7 +44,6 @@ class DataBase {
             case 'create table': {
                 const databaseId = this.database.current;
                 const newTable = createTable(queryString, databaseId);
-                console.log(newTable);
                 this._addTable(newTable);
                 break;
             }
@@ -71,7 +82,7 @@ db.query('CREATE DATABASE school');
 db.query('USE school');
 //
 db.query('CREATE TABLE teacher (id int, full_name varchar(255), age int)');
-db.query('INSERT INTO student (id, fullName,age) VALUES (1,"Ivan Ferraro", 19)');
+db.query('INSERT INTO teacher (id, fullName,age) VALUES (1,"Ivan Ferraro", 19)');
 // db.query('SELECT * FROM student');
 // db.query('SELECT fullName, age FROM student');
 // db.query('SELECT * FROM student WHERE age > 18');
