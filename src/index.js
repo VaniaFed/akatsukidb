@@ -32,8 +32,8 @@ class DataBase {
             case 'create table': {
                 const databaseId = this.database.current;
                 const newTable = createTable(queryString, databaseId);
+                console.log(newTable);
                 this._addTable(newTable);
-                console.log(this.tables);
                 break;
             }
             case 'use database': {
@@ -70,10 +70,7 @@ const db = new DataBase();
 db.query('CREATE DATABASE school');
 db.query('USE school');
 //
-db.query('CREATE TABLE student (id int, full_name varchar(255), age int)');
 db.query('CREATE TABLE teacher (id int, full_name varchar(255), age int)');
-db.query('CREATE TABLE employee (id int, full_name varchar(255), age int)');
-db.query('CREATE TABLE god (id int, full_name varchar(255), age int)');
 db.query('INSERT INTO student (id, fullName,age) VALUES (1,"Ivan Ferraro", 19)');
 // db.query('SELECT * FROM student');
 // db.query('SELECT fullName, age FROM student');
