@@ -11,7 +11,6 @@ export const createTable = (queryString, databaseId) => {
 };
 
 const getTableData = queryString => {
-    console.log('get table data');
     const regx = /create\stable\s(\w+)\s\(([\w\s\d,()"']+)\)/i;
     const tableName = queryString.match(regx)[1];
     const tableDataString =  queryString.match(regx)[2];
