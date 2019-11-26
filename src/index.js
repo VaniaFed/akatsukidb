@@ -26,14 +26,14 @@ class DataBase {
                 break;
             }
             case 'create database': {
-                const newDatabase = createDatabase(queryString);
-                this._addDatabase(newDatabase);
+                const database = createDatabase(queryString);
+                this._addDatabase(database);
                 break;
             }
             case 'create table': {
                 const databaseId = this.database.current;
-                const newTable = createTable(queryString, databaseId);
-                this._addTable(newTable);
+                const table = createTable(queryString, databaseId);
+                this._addTable(table);
                 break;
             }
             case 'use database': {
@@ -60,27 +60,26 @@ class DataBase {
         });
     }
     _setCurrentDatabase(queryString) {
-        const databaseName = this._getUseDatabaseName(queryString);
+        const name = this._getUseDatabaseName(queryString);
         this.database.current = this.database.list.find(database =>
-            database.name === databaseName
+            database.name === name
         ).id;
     }
     _getUseDatabaseName(queryString) {
         const regx = /use (\b\w+\b)/i;
-        const databaseName = queryString.match(regx)[1];
-        return databaseName;
+        return queryString.match(regx)[1];
     }
     _select(queryString) {
         const regx = /select\s([*\w,\s]+)\sfrom (\w+)/i;
-        const tableSelectionFields = queryString.match(regx)[1];
+        const tableSelectedFields = queryString.match(regx)[1];
         const tableName = queryString.match(regx)[2];
-        return this._getFieldsFromTable(tableSelectionFields, tableName)
+        return this._getFieldsFromTable(tableSelectedFields, tableName);
     }
     _getFieldsFromTable (tableSelectionFields, tableName) {
         const tableId = this._getTableByName(tableName).id;
 
         if (tableSelectionFields === '*') {
-            return this.entries.filter(entry => entry.tableId === tableId)
+            return this.entries.filter(entry => entry.tableId === tableId);
         } else {
             // TODO: if we have certain fields to get
             // so we should work on it just here...
