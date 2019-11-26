@@ -21,8 +21,8 @@ class DataBase {
                 return this._select(queryString);
             }
             case 'insert': {
-                const { tableName, fields, values } = insert(queryString);
-                this._updateTable(tableName, fields, values);
+                const { tableName, columns } = insert(queryString);
+                this._updateTable(tableName, columns);
                 break;
             }
             case 'create database': {
@@ -52,12 +52,8 @@ class DataBase {
     _addTable(table) {
         this.tables = [...this.tables, table];
     }
-    _updateTable(tableName, fields, values) {
+    _updateTable(tableName, columns) {
         const tableId = this._getTableByName(tableName).id;
-        const columns = {};
-        fields.forEach((field, i) => {
-            columns[field] = values[i];
-        });
         this.entries.push({
             tableId,
             columns
@@ -104,12 +100,12 @@ db.query('INSERT INTO teacher (id, fullName,age) VALUES (1,"Ivan Ferraro", 19)')
 const teachers = db.query('SELECT * FROM teacher');
 console.log(teachers);
 
-db.query('CREATE TABLE student (id int, full_name varchar(255), age int)');
-db.query('INSERT INTO student (id, fullName,age) VALUES (1,"Jack Fresco", 60)');
-db.query('INSERT INTO student (id, fullName,age) VALUES (2,"Ivan Fabiano", 19)');
+// db.query('CREATE TABLE student (id int, full_name varchar(255), age int)');
+// db.query('INSERT INTO student (id, fullName,age) VALUES (1,"Jack Fresco", 60)');
+// db.query('INSERT INTO student (id, fullName,age) VALUES (2,"Ivan Fabiano", 19)');
 
-const students = db.query('SELECT * FROM student');
-console.log(students);
+// const students = db.query('SELECT * FROM student');
+// console.log(students);
 // db.query('SELECT fullName, age FROM student');
 // db.query('SELECT * FROM student');
 // db.query('SELECT * FROM teacher WHERE age > 18');
