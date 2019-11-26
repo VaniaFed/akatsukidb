@@ -54,12 +54,13 @@ class DataBase {
     }
     _updateTable(tableName, fields, values) {
         const tableId = this._getTableByName(tableName).id;
+        const columns = {};
         fields.forEach((field, i) => {
-            this.entries.push({
-                tableId,
-                field,
-                value: values[i]
-            });
+            columns[field] = values[i];
+        });
+        this.entries.push({
+            tableId,
+            columns
         });
     }
     _setCurrentDatabase(queryString) {
@@ -97,15 +98,16 @@ class DataBase {
 const db = new DataBase();
 db.query('CREATE DATABASE school');
 db.query('USE school');
-//
-db.query('CREATE TABLE student (id int, full_name varchar(255), age int)');
-db.query('INSERT INTO student (id, fullName,age) VALUES (1,"Jack Frescko", 60)');
-db.query('INSERT INTO student (id, fullName,age) VALUES (2,"Ivan Fedyakov", 19)');
+
 db.query('CREATE TABLE teacher (id int, full_name varchar(255), age int)');
 db.query('INSERT INTO teacher (id, fullName,age) VALUES (1,"Ivan Ferraro", 19)');
-
 const teachers = db.query('SELECT * FROM teacher');
 console.log(teachers);
+
+db.query('CREATE TABLE student (id int, full_name varchar(255), age int)');
+db.query('INSERT INTO student (id, fullName,age) VALUES (1,"Jack Fresco", 60)');
+db.query('INSERT INTO student (id, fullName,age) VALUES (2,"Ivan Fabiano", 19)');
+
 const students = db.query('SELECT * FROM student');
 console.log(students);
 // db.query('SELECT fullName, age FROM student');
