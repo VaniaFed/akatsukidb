@@ -1,4 +1,4 @@
-import { determineAction, createDatabase, createTable, insert } from './actions/index';
+import { determineAction, createDatabase, createTable, insert, getEntriesWithCertainFields } from './actions/index';
 
 class DataBase {
     constructor () {
@@ -73,24 +73,16 @@ class DataBase {
         const regx = /select\s([*\w,\s]+)\sfrom\s(\w+)/i;
         const tableSelectedFields = queryString.match(regx)[1];
         const tableName = queryString.match(regx)[2];
-        return this._getFieldsFromTable(tableSelectedFields, tableName);
+        return this._pullFieldsFromTable(tableSelectedFields, tableName);
     }
-    _getFieldsFromTable (selectedFieldsString, tableName) {
+    _pullFieldsFromTable (selectedFieldsString, tableName) {
         const tableId = this._getTableByName(tableName).id;
 
         if (selectedFieldsString === '*') {
             return this._selectAllFields(tableId);
         } else {
             const fields = selectedFieldsString.split(/\s?,\s?/);
-            return this.entries.map(entry => {
-                const columns = {};
-                fields.forEach(field => {
-                    if (field in entry.columns) {
-                        columns[field] = entry.columns[field];
-                    }
-                });
-                return { tableId, columns };
-            });
+            return getEntriesWithCertainFields(this.entries, fields, tableId);
         }
     }
     _selectAllFields (tableId) {
@@ -115,7 +107,7 @@ db.query('INSERT INTO student (id, fullName,age) VALUES (1,"Jack Fresco", 60)');
 db.query('INSERT INTO student (id, fullName,age) VALUES (2,"Ivan Fabiano", 19)');
 //
 // const students = db.query('SELECT age, id FROM student');
-const students = db.query('SELECT * FROM student');
+const students = db.query('SELECT age FROM student');
 console.log(students);
 // db.query('SELECT * FROM teacher WHERE age > 18');
 
