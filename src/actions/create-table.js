@@ -36,7 +36,6 @@ const convertColumns = (tableData) => {
     const columns = tableData.split(/,\s/i);
     return columns.map(item => {
         const [name, type] = item.split(/\s/i);
-
         return { name, type };
     });
 };

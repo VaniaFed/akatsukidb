@@ -1,7 +1,7 @@
 import { determineAction, createDatabase, createTable, insert, getEntriesWithCertainFields } from './actions/index';
 
 class DataBase {
-    constructor () {
+    constructor() {
         this.database = {
             current: null,
             list: []
@@ -75,17 +75,14 @@ class DataBase {
         const tableName = queryString.match(regx)[2];
         return this._pullFieldsFromTable(tableSelectedFields, tableName);
     }
-    _pullFieldsFromTable (selectedFieldsString, tableName) {
+    _pullFieldsFromTable(selectedFieldsString, tableName) {
         const tableId = this._getTableByName(tableName).id;
-
-        if (selectedFieldsString === '*') {
-            return this._selectAllFields(tableId);
-        } else {
-            const fields = selectedFieldsString.split(/\s?,\s?/);
-            return getEntriesWithCertainFields(this.entries, fields, tableId);
-        }
+        const fields = selectedFieldsString.split(/\s?,\s?/);
+        return selectedFieldsString === '*'
+            ? this._selectAllFields(tableId)
+            : getEntriesWithCertainFields(this.entries, fields, tableId);
     }
-    _selectAllFields (tableId) {
+    _selectAllFields(tableId) {
         return this.entries.filter(entry => entry.tableId === tableId);
     }
     _getTableByName(tableName) {
