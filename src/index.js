@@ -70,20 +70,31 @@ class DataBase {
         return queryString.match(regx)[1];
     }
     _select(queryString) {
-        const regx = /select\s([*\w,\s]+)\sfrom (\w+)/i;
+        const regx = /select\s([*\w,\s]+)\sfrom\s(\w+)/i;
         const tableSelectedFields = queryString.match(regx)[1];
         const tableName = queryString.match(regx)[2];
         return this._getFieldsFromTable(tableSelectedFields, tableName);
     }
-    _getFieldsFromTable (tableSelectionFields, tableName) {
+    _getFieldsFromTable (selectedFieldsString, tableName) {
         const tableId = this._getTableByName(tableName).id;
 
-        if (tableSelectionFields === '*') {
-            return this.entries.filter(entry => entry.tableId === tableId);
+        if (selectedFieldsString === '*') {
+            return this._selectAllFields(tableId);
         } else {
-            // TODO: if we have certain fields to get
-            // so we should work on it just here...
+            const fields = selectedFieldsString.split(/\s?,\s?/);
+            return this.entries.map(entry => {
+                const columns = {};
+                fields.forEach(field => {
+                    if (field in entry.columns) {
+                        columns[field] = entry.columns[field];
+                    }
+                });
+                return { tableId, columns };
+            });
         }
+    }
+    _selectAllFields (tableId) {
+        return this.entries.filter(entry => entry.tableId === tableId);
     }
     _getTableByName(tableName) {
         return this.tables.find(table => table.name === tableName);
@@ -94,18 +105,17 @@ const db = new DataBase();
 db.query('CREATE DATABASE school');
 db.query('USE school');
 
-db.query('CREATE TABLE teacher (id int, full_name varchar(255), age int)');
-db.query('INSERT INTO teacher (id, fullName,age) VALUES (1,"Ivan Ferraro", 19)');
-const teachers = db.query('SELECT * FROM teacher');
-console.log(teachers);
+// db.query('CREATE TABLE teacher (id int, full_name varchar(255), age int)');
+// db.query('INSERT INTO teacher (id, fullName,age) VALUES (1,"Ivan Ferraro", 19)');
+// const teachers = db.query('SELECT * FROM teacher');
+// console.log(teachers);
 
-// db.query('CREATE TABLE student (id int, full_name varchar(255), age int)');
-// db.query('INSERT INTO student (id, fullName,age) VALUES (1,"Jack Fresco", 60)');
-// db.query('INSERT INTO student (id, fullName,age) VALUES (2,"Ivan Fabiano", 19)');
-
-// const students = db.query('SELECT * FROM student');
-// console.log(students);
-// db.query('SELECT fullName, age FROM student');
-// db.query('SELECT * FROM student');
+db.query('CREATE TABLE student (id int, full_name varchar(255), age int)');
+db.query('INSERT INTO student (id, fullName,age) VALUES (1,"Jack Fresco", 60)');
+db.query('INSERT INTO student (id, fullName,age) VALUES (2,"Ivan Fabiano", 19)');
+//
+// const students = db.query('SELECT age, id FROM student');
+const students = db.query('SELECT * FROM student');
+console.log(students);
 // db.query('SELECT * FROM teacher WHERE age > 18');
 
