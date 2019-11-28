@@ -18,12 +18,12 @@ const extractTableName = (s, rx) => {
 
 const extractFields = (s, rx) => {
     const fieldsString = s.match(rx)[2];
-    return fieldsString.split(/,\s*/i);
+    return fieldsString.split(/\s*,\s*/i);
 };
 
 const extractValues = (s, rx) => {
     const valuesString = s.match(rx)[3];
-    return valuesString.split(/,\s*/i);
+    return valuesString.split(/\s*,\s*/i);
 };
 
 const getConvertedColumns = (fields, values) => {

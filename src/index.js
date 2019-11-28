@@ -72,29 +72,42 @@ class DataBase {
     _select(queryString) {
         const filterRx = /\s?where\s?/i;
         if (filterRx.test(queryString)) {
-            const regx = /select\s([*\w,\s]+)\sfrom\s(\w+)\s?(where\s([\d\w\s><=+-]+))?/i;
-            const tableName = queryString.match(regx)[2];
-            const tableId = this._getTableByName(tableName).id;
-            const filterCondition = queryString.match(regx)[4];
-            const conditions = filterCondition.split(/\s?and\s?/i);
-            const tableSelectedFieldsString = queryString.match(regx)[1];
-            const inputFields = tableSelectedFieldsString.split(/\s?,\s?/);
-            const filteredEntries = this._applyFilter(this._selectAllFields(tableId), conditions);
-            return tableSelectedFieldsString === '*'
-                ? filteredEntries
-                : getEntriesWithCertainFields(filteredEntries, inputFields, tableId);
+            return this._pullFieldsFromTableAndApplyFilter(queryString);
         } else {
-            const regx = /select\s([*\w,\s]+)\sfrom\s(\w+)\s?/i;
-            const tableSelectedFieldsString = queryString.match(regx)[1];
-            const inputFields = tableSelectedFieldsString.split(/\s?,\s?/);
-            const tableName = queryString.match(regx)[2];
-            const tableId = this._getTableByName(tableName).id;
-            return tableSelectedFieldsString === '*'
-                ? this._selectAllFields(tableId)
-                : getEntriesWithCertainFields(this.entries, inputFields, tableId);
+            return this._pullFieldsFromTable(queryString);
         }
     }
-    _applyFilter (entries, conditions) {
+    _pullFieldsFromTableAndApplyFilter(qs) {
+        const regx = /select\s([*\w,\s]+)\sfrom\s(\w+)\s?(where\s([\d\w\s><=+-]+))?/i;
+        const tableName = qs.match(regx)[2];
+        const tableId = this._getTableByName(tableName).id;
+        const conditions = this._extractConditions(qs, regx);
+        const filteredEntries = this._applyFilter(this._selectAllFields(tableId), conditions);
+        const tableSelectedFieldsString = qs.match(regx)[1];
+        const inputFields = this._extractFieldsWhenSelect(qs, regx);
+        return tableSelectedFieldsString === '*'
+            ? filteredEntries
+            : getEntriesWithCertainFields(filteredEntries, inputFields, tableId);
+    }
+    _pullFieldsFromTable (qs) {
+        const regx = /select\s([*\w,\s]+)\sfrom\s(\w+)\s?/i;
+        const tableName = qs.match(regx)[2];
+        const tableId = this._getTableByName(tableName).id;
+        const tableSelectedFieldsString = qs.match(regx)[1];
+        const inputFields = this._extractFieldsWhenSelect(qs, regx);
+        return tableSelectedFieldsString === '*'
+            ? this._selectAllFields(tableId)
+            : getEntriesWithCertainFields(this.entries, inputFields, tableId);
+    }
+    _extractFieldsWhenSelect(qs, rx) {
+        const tableSelectedFieldsString = qs.match(rx)[1];
+        return tableSelectedFieldsString.split(/\s?,\s?/);
+    }
+    _extractConditions(qs, rx) {
+        const filterCondition = qs.match(rx)[4];
+        return filterCondition.split(/\s?and\s?/i);
+    }
+    _applyFilter(entries, conditions) {
         let filteredEntries = [];
         conditions.forEach(condition => {
             filteredEntries = entries.filter(entry => {
@@ -137,6 +150,5 @@ db.query('INSERT INTO student (id, fullName,age) VALUES (2,"Petr Laconic", 19)')
 db.query('INSERT INTO student (id, fullName,age) VALUES (3,"Ivan Fabiano", 20)');
 //
 // const students = db.query('SELECT age, id FROM student');
-const students = db.query('SELECT id, age FROM student WHERE age >= 20');
+const students = db.query('SELECT * FROM student where age >= 19 and id >=2');
 console.log(students);
-
