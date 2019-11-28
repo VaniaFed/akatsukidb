@@ -70,17 +70,49 @@ class DataBase {
         return queryString.match(regx)[1];
     }
     _select(queryString) {
-        const regx = /select\s([*\w,\s]+)\sfrom\s(\w+)/i;
-        const tableSelectedFields = queryString.match(regx)[1];
-        const tableName = queryString.match(regx)[2];
-        return this._pullFieldsFromTable(tableSelectedFields, tableName);
+        const filterRx = /\s?where\s?/i;
+        if (filterRx.test(queryString)) {
+            const regx = /select\s([*\w,\s]+)\sfrom\s(\w+)\s?(where\s([\d\w\s><=+-]+))?/i;
+            const tableName = queryString.match(regx)[2];
+            const tableId = this._getTableByName(tableName).id;
+            const filterCondition = queryString.match(regx)[4];
+            const conditions = filterCondition.split(/\s?and\s?/i);
+            const tableSelectedFieldsString = queryString.match(regx)[1];
+            const inputFields = tableSelectedFieldsString.split(/\s?,\s?/);
+            const filteredEntries = this._applyFilter(this._selectAllFields(tableId), conditions);
+            return tableSelectedFieldsString === '*'
+                ? filteredEntries
+                : getEntriesWithCertainFields(filteredEntries, inputFields, tableId);
+        } else {
+            const regx = /select\s([*\w,\s]+)\sfrom\s(\w+)\s?/i;
+            const tableSelectedFieldsString = queryString.match(regx)[1];
+            const inputFields = tableSelectedFieldsString.split(/\s?,\s?/);
+            const tableName = queryString.match(regx)[2];
+            const tableId = this._getTableByName(tableName).id;
+            return tableSelectedFieldsString === '*'
+                ? this._selectAllFields(tableId)
+                : getEntriesWithCertainFields(this.entries, inputFields, tableId);
+        }
     }
-    _pullFieldsFromTable(selectedFieldsString, tableName) {
-        const tableId = this._getTableByName(tableName).id;
-        const fields = selectedFieldsString.split(/\s?,\s?/);
-        return selectedFieldsString === '*'
-            ? this._selectAllFields(tableId)
-            : getEntriesWithCertainFields(this.entries, fields, tableId);
+    _applyFilter (entries, conditions) {
+        let filteredEntries = [];
+        conditions.forEach(condition => {
+            filteredEntries = entries.filter(entry => {
+                const columnsData = Object.entries(entry.columns);
+                let shouldEntryBeIncluded = true;
+                columnsData.forEach(columnData => {
+                    const key = columnData[0];
+                    if (condition.includes(key)) {
+                        const conditionWithoutKey = condition.replace(key, '');
+                        if (!eval(`${entry.columns[key]} ${conditionWithoutKey}`)) {
+                            shouldEntryBeIncluded = false;
+                        }
+                    }
+                });
+                return shouldEntryBeIncluded;
+            });
+        });
+        return filteredEntries;
     }
     _selectAllFields(tableId) {
         return this.entries.filter(entry => entry.tableId === tableId);
@@ -101,10 +133,10 @@ db.query('USE school');
 
 db.query('CREATE TABLE student (id int, full_name varchar(255), age int)');
 db.query('INSERT INTO student (id, fullName,age) VALUES (1,"Jack Fresco", 60)');
-db.query('INSERT INTO student (id, fullName,age) VALUES (2,"Ivan Fabiano", 19)');
+db.query('INSERT INTO student (id, fullName,age) VALUES (2,"Petr Laconic", 19)');
+db.query('INSERT INTO student (id, fullName,age) VALUES (3,"Ivan Fabiano", 20)');
 //
 // const students = db.query('SELECT age, id FROM student');
-const students = db.query('SELECT age FROM student');
+const students = db.query('SELECT id, age FROM student WHERE age >= 20');
 console.log(students);
-// db.query('SELECT * FROM teacher WHERE age > 18');
 
